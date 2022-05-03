@@ -1,0 +1,38 @@
+name: Weekly retro
+
+on:
+  schedule:
+    - cron: "0 12 * * 2" # Tuesday at 12 pm UTC (which is early morning in the US)
+  workflow_dispatch:
+
+jobs:
+  weekly_meeting:
+    name: create new issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get date
+        id: get_date
+        run: echo ::set-output name=date::$(date -u '+%B %d %Y')
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Pull template and extract fields
+        uses: imjohnbo/extract-issue-template-fields@v1
+        id: extract
+        with:
+          path: .github/ISSUE_TEMPLATE/retro.md
+
+      - name: Create issue
+        id: issue-bot
+        uses: imjohnbo/issue-bot@v3
+        with:
+          assignees: ${{ steps.extract.outputs.assignees }}
+          labels: ${{ steps.extract.outputs.labels }}
+          title: Team Meeting - ${{ steps.get_date.outputs.date }}
+          body: ${{ steps.extract.outputs.body }}
+          close-previous: true
+          pinned: true
+          linked-comments: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
