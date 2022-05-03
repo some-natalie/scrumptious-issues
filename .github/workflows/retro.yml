@@ -3,11 +3,11 @@ name: Weekly retro
 on:
   schedule:
     - cron: "0 12 * * 2" # Tuesday at 12 pm UTC (which is early morning in the US)
-  workflow_dispatch:
+  workflow_dispatch: # Run on demand
 
-permissions:
-  contents: read
-  issues: write
+permissions: # Set the permissions needed to run
+  contents: read # read the contents of the repository
+  issues: write # write issues to the repository
 
 jobs:
   weekly_meeting:
@@ -38,5 +38,3 @@ jobs:
           close-previous: true
           pinned: true
           linked-comments: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
