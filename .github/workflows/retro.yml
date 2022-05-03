@@ -5,6 +5,10 @@ on:
     - cron: "0 12 * * 2" # Tuesday at 12 pm UTC (which is early morning in the US)
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   weekly_meeting:
     name: create new issue
