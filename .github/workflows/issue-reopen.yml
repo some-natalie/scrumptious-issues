@@ -31,5 +31,5 @@ jobs:
               owner: repo.owner.login,
               repo: repo.name,
               issue_number: issue.number,
-              body: `@${watchersName}, heads up!  This issue ${issue.number} has been reopened.`
+              body: `@${watcherName}, heads up!  This issue ${issue.number} has been reopened.`
             });
