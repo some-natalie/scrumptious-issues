@@ -16,20 +16,20 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            // check if issue has the reopen label
             const issue = context.payload.issue;
-            const repo = context.payload.repository;
-            const watchers = await github.rest.issues.listComments({
-              owner: repo.owner.login,
-              repo: repo.name,
-              issue_number: issue.number
-            });
-            let watcherNames = '';
-            for (const watcher of watchers.data) {
-              watcherNames += `@${watcher.user.login} `;
+            const reopenLabel = issue.labels.find(label => label.name === 'reopen');
+            if (!reopenLabel) {
+              console.log('Issue does not have the reopen label');
+              return;
             }
-            await github.rest.issues.createComment({
-              owner: repo.owner.login,
-              repo: repo.name,
+            // comment on the issue and tag natalie
+            const comment = `
+              @some-natalie, this issue has been reopened. Please take a look.
+            `;
+            await github.issues.createComment({
               issue_number: issue.number,
-              body: `@${watcherName}, heads up!  This issue ${issue.number} has been reopened.`
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
             });
