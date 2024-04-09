@@ -1,0 +1,34 @@
+name: issue reopen workflow
+
+on:
+  issues:
+    types: [reopened]
+
+jobs:
+  reopen:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: notify all watchers on issue reopen
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const watchers = await github.issues.listComments({
+              owner: issue.repository.owner.login,
+              repo: issue.repository.name,
+              issue_number: issue.number
+            });
+            let watcherNames = '';
+            for (const watcher of watchers.data) {
+              watcherNames += `@${watcher.user.login} `;
+            }
+            await github.issues.createComment({
+              owner: issue.repository.owner.login,
+              repo: issue.repository.name,
+              issue_number: issue.number,
+              body: `@${watchersName}, heads up!  This issue ${issue.number} has been reopened.`
+            });
