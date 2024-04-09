@@ -17,18 +17,19 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
+            const repo = context.payload.repository;
             const watchers = await github.rest.issues.listComments({
-              owner: issue.repository.owner.login,
-              repo: issue.repository.name,
+              owner: repo.owner.login,
+              repo: repo.name,
               issue_number: issue.number
             });
             let watcherNames = '';
             for (const watcher of watchers.data) {
               watcherNames += `@${watcher.user.login} `;
             }
-            await github.issues.createComment({
-              owner: issue.repository.owner.login,
-              repo: issue.repository.name,
+            await github.rest.issues.createComment({
+              owner: repo.owner.login,
+              repo: repo.name,
               issue_number: issue.number,
               body: `@${watchersName}, heads up!  This issue ${issue.number} has been reopened.`
             });
