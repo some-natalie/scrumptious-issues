@@ -17,7 +17,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
-            const watchers = await github.issues.listComments({
+            const watchers = await github.rest.issues.listComments({
               owner: issue.repository.owner.login,
               repo: issue.repository.name,
               issue_number: issue.number
